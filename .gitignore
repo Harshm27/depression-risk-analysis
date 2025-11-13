@@ -1,0 +1,22 @@
+# R files
+.Rhistory
+.RData
+.Rproj.user
+
+# Data files (optional - uncomment if you want to keep data private)
+# *.csv
+# *.dta
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Documents (optional - uncomment if you want to keep assignments private)
+# *.pdf
+# *.docx
+
+# Temporary files
+*~
+*.swp
+*.swo
+

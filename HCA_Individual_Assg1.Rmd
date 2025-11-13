@@ -1,0 +1,805 @@
+---
+title: "Healthcare Analytics Individual Assignment"
+output: html_document
+---
+\
+
+## R Code
+\
+
+### Part 0 - Data Import
+\
+
+#### Importing Libraries
+```{r}
+library(haven)
+library(ggplot2)
+```
+
+#### Extraction of Dataset and Storing it
+```{r}
+# Define the directory where your files are stored
+data_dir <- "/Users/harsh/Downloads/ICPSR_21600"
+
+# Initialize a list to store the datasets
+data_list <- list()
+
+# Loop through DS0001 to DS0042
+for (i in 1:42) {
+  
+  # Format the dataset number with leading zeros (e.g., DS0001)
+  ds_num <- sprintf("DS%04d", i)
+  
+  # Build the correct file name (note the difference in pattern)
+  if (i < 10) {
+    file_name <- paste0("21600-000", i, "-Data.dta")
+  } else {
+    file_name <- paste0("21600-00", i, "-Data.dta")
+  }
+  
+  # Build the full file path
+  file_path <- file.path(data_dir, ds_num, file_name)
+  
+  # Print progress (optional)
+  cat("Reading:", file_path, "\n")
+  
+  # Check if the file exists to avoid crashing
+  if (file.exists(file_path)) {
+    data_list[[ds_num]] <- read_dta(file_path)
+  } else {
+    cat("File not found:", file_path, "\n")
+  }
+}
+
+# Check the loaded datasets
+names(data_list)
+```
+
+#### List of Target Variables
+```{r}
+vars <- c(
+  "AID", "H3ID15",  # ID + target
+  "H3DA15", "H3FS12", "H3FS11", "H3SP6", "H3WP46", "H3WP53", "H3WP57",  # Friends & Family
+  "H3DA28", "H3EC7", "H3EC3", "H3DA36", "H3EC26", "H3EC38",             # Socioeconomic
+  "BIO_SEX3", "H3OD4A"                                                 # Demographics
+)
+```
+
+#### Saving the Subset of Dataset
+```{r}
+wave3_data <- read_dta("/Users/harsh/Downloads/ICPSR_21600/DS0008/21600-0008-Data.dta")
+
+data_subset <- wave3_data[ , vars]
+
+str(data_subset)
+summary(data_subset)
+colSums(is.na(data_subset))
+
+cleaned_data <- na.omit(data_subset)
+
+write.csv(cleaned_data, "cleaned_addhealth_data.csv", row.names = FALSE)
+```
+
+#### Dataset Preview
+```{r}
+head(cleaned_data)
+```
+
+\
+\
+
+### Part 1 - Dataset Preparation
+
+#### Re-labelling
+
+##### A) Target Variable
+```{r}
+# Recode H3ID15 – Have you ever been diagnosed with depression?
+# 0 = No, 1 = Yes, all others = NA
+
+cleaned_data$H3ID15_recode <- ifelse(cleaned_data$H3ID15 %in% c(0, 1),
+                                     cleaned_data$H3ID15,
+                                     NA)
+
+# Convert to labeled factor
+cleaned_data$H3ID15_recode <- factor(cleaned_data$H3ID15_recode,
+                                     levels = c(0, 1),
+                                     labels = c("No Depression", "Diagnosed Depression"))
+
+```
+
+##### B) Independent Variable
+
+###### B1) Friends & Family
+```{r}
+#1
+# Recode H3DA15 – Number of times hung out with friends (0–7)
+# Set 96/98 to NA
+
+cleaned_data$H3DA15_recode <- ifelse(cleaned_data$H3DA15 %in% 0:7,
+                                     cleaned_data$H3DA15,
+                                     NA)
+
+
+#2
+# Recode H3FS12 – Who influenced you more: friends or family?
+# 1 = Friends, 2 = Family, 5 = Not Asked, 7/8/9 = NA
+
+cleaned_data$H3FS12_recode <- ifelse(cleaned_data$H3FS12 %in% c(1, 2, 5),
+                                     cleaned_data$H3FS12,
+                                     NA)
+# Convert to labeled factor
+cleaned_data$H3FS12_recode <- factor(cleaned_data$H3FS12_recode,
+                                     levels = c(1, 2, 5),
+                                     labels = c("Friends more influential", 
+                                                "Family more influential", 
+                                                "Not Asked"))
+
+#3
+# Recode H3FS11 – How many high school friends are you still friends with?
+# Valid: 0–5 (scale), 95 = "Not Asked", rest = NA
+
+cleaned_data$H3FS11_recode <- ifelse(cleaned_data$H3FS11 %in% c(0:5, 95),
+                                     cleaned_data$H3FS11,
+                                     NA)
+
+# Convert to factor with "Not Asked" as a separate category
+cleaned_data$H3FS11_recode <- factor(cleaned_data$H3FS11_recode,
+                                     levels = c(0, 1, 2, 3, 4, 5, 95),
+                                     labels = c("None", "One", "A few", "Some", "Most", "All", "Not Asked"),
+                                     ordered = FALSE)  # or TRUE if you treat it as ordinal
+
+
+#4
+# Recode H3SP6 – How often could you not shake off the blues (past 7 days)?
+# Keep 0–3, set 6/8/9 to NA
+
+cleaned_data$H3SP6_recode <- ifelse(cleaned_data$H3SP6 %in% 0:3,
+                                    cleaned_data$H3SP6,
+                                    NA)
+
+# Convert to ordered factor
+cleaned_data$H3SP6_recode <- factor(cleaned_data$H3SP6_recode,
+                                    levels = 0:3,
+                                    labels = c("Never or rarely", 
+                                               "Sometimes", 
+                                               "A lot of the time", 
+                                               "Most/all of the time"),
+                                    ordered = TRUE)
+
+
+
+#5
+# Recode H3WP46 – Closeness to biological mother, with skip retained
+# Valid: 1–5, 97 = Not applicable
+
+cleaned_data$H3WP46_recode <- ifelse(cleaned_data$H3WP46 %in% c(1:5, 97),
+                                     cleaned_data$H3WP46,
+                                     NA)
+
+# Convert to labeled factor (including "Skipped/Not Applicable")
+cleaned_data$H3WP46_recode <- factor(cleaned_data$H3WP46_recode,
+                                     levels = c(1:5, 97),
+                                     labels = c("Extremely close", 
+                                                "Quite close", 
+                                                "Somewhat close", 
+                                                "Not very close", 
+                                                "Not close at all",
+                                                "Not applicable / skipped"),
+                                     ordered = FALSE)
+
+
+#6
+# Recode H3WP53 – Closeness to biological father
+# Valid: 1–5, 97 = "Not applicable/skipped", others = NA
+
+cleaned_data$H3WP53_recode <- ifelse(cleaned_data$H3WP53 %in% c(1:5, 97),
+                                     cleaned_data$H3WP53,
+                                     NA)
+
+# Convert to labeled factor
+cleaned_data$H3WP53_recode <- factor(cleaned_data$H3WP53_recode,
+                                     levels = c(1:5, 97),
+                                     labels = c("Extremely close",
+                                                "Quite close",
+                                                "Somewhat close",
+                                                "Not very close",
+                                                "Not close at all",
+                                                "Not applicable / skipped"),
+                                     ordered = FALSE)
+
+
+#7
+# Recode H3WP57 – Do your biological parents live together?
+# 0 = No, 1 = Yes, 7 = Not applicable/skipped, others = NA
+
+cleaned_data$H3WP57_recode <- ifelse(cleaned_data$H3WP57 %in% c(0, 1, 7),
+                                     cleaned_data$H3WP57,
+                                     NA)
+
+# Convert to labeled factor
+cleaned_data$H3WP57_recode <- factor(cleaned_data$H3WP57_recode,
+                                     levels = c(0, 1, 7),
+                                     labels = c("No", 
+                                                "Yes", 
+                                                "Not applicable / skipped"))
+
+```
+
+####### B2) Socioeconomic Factors
+
+```{r}
+#1
+# Recode H3DA28 – Do you currently have a job?
+# 0 = No, 1 = Yes, others = NA
+
+cleaned_data$H3DA28_recode <- ifelse(cleaned_data$H3DA28 %in% c(0, 1),
+                                     cleaned_data$H3DA28,
+                                     NA)
+
+# Convert to labeled factor
+cleaned_data$H3DA28_recode <- factor(cleaned_data$H3DA28_recode,
+                                     levels = c(0, 1),
+                                     labels = c("No", "Yes"))
+
+
+
+#2
+# Recode H3EC7 – Estimated total household income
+# 1–8 = valid, 97 = "Skipped", others = NA
+
+cleaned_data$H3EC7_recode <- ifelse(cleaned_data$H3EC7 %in% c(1:8, 97),
+                                    cleaned_data$H3EC7,
+                                    NA)
+
+# Convert to ordered factor
+cleaned_data$H3EC7_recode <- factor(cleaned_data$H3EC7_recode,
+                                    levels = c(1:8, 97),
+                                    labels = c("Less than $10,000",
+                                               "$10,000–14,999",
+                                               "$15,000–19,999",
+                                               "$20,000–29,999",
+                                               "$30,000–39,999",
+                                               "$40,000–49,999",
+                                               "$50,000–74,999",
+                                               "$75,000 or more",
+                                               "Not applicable / skipped"),
+                                    ordered = TRUE)
+
+
+
+#3
+# Recode H3EC3 – Estimated total personal income
+# 1–8 = valid, 97 = "Skipped", others = NA
+
+cleaned_data$H3EC3_recode <- ifelse(cleaned_data$H3EC3 %in% c(1:8, 97),
+                                    cleaned_data$H3EC3,
+                                    NA)
+
+# Convert to ordered factor
+cleaned_data$H3EC3_recode <- factor(cleaned_data$H3EC3_recode,
+                                    levels = c(1:8, 97),
+                                    labels = c("Less than $10,000",
+                                               "$10,000–14,999",
+                                               "$15,000–19,999",
+                                               "$20,000–29,999",
+                                               "$30,000–39,999",
+                                               "$40,000–49,999",
+                                               "$50,000–74,999",
+                                               "$75,000 or more",
+                                               "Not applicable / skipped"),
+                                    ordered = TRUE)
+
+
+#4
+# Recode H3DA36 – Enrolled in school/job training/vocational education
+# 0 = No, 1 = Yes, others = NA
+
+cleaned_data$H3DA36_recode <- ifelse(cleaned_data$H3DA36 %in% c(0, 1),
+                                     cleaned_data$H3DA36,
+                                     NA)
+
+# Convert to labeled factor
+cleaned_data$H3DA36_recode <- factor(cleaned_data$H3DA36_recode,
+                                     levels = c(0, 1),
+                                     labels = c("No", "Yes"))
+
+
+#5
+# Recode H3EC26 – Currently receiving AFDC/public assistance/welfare?
+# 0 = No, 1 = Yes, others = NA
+
+cleaned_data$H3EC26_recode <- ifelse(cleaned_data$H3EC26 %in% c(0, 1),
+                                     cleaned_data$H3EC26,
+                                     NA)
+
+# Convert to labeled factor
+cleaned_data$H3EC26_recode <- factor(cleaned_data$H3EC26_recode,
+                                     levels = c(0, 1),
+                                     labels = c("No", "Yes"))
+
+
+#6
+# Recode H3EC38 – Ever received public assistance (excluding food stamps)?
+# 0 = No, 1 = Yes, 5 = Not Asked, others = NA
+
+cleaned_data$H3EC38_recode <- ifelse(cleaned_data$H3EC38 %in% c(0, 1, 5),
+                                     cleaned_data$H3EC38,
+                                     NA)
+
+# Convert to labeled factor
+cleaned_data$H3EC38_recode <- factor(cleaned_data$H3EC38_recode,
+                                     levels = c(0, 1, 5),
+                                     labels = c("No", "Yes", "Not Asked"))
+
+
+```
+
+###### B3) Demographics
+```{r}
+#1
+# Recode BIO_SEX3 – Respondent's gender
+# 1 = Male, 2 = Female
+
+cleaned_data$BIO_SEX3_recode <- factor(cleaned_data$BIO_SEX3,
+                                       levels = c(1, 2),
+                                       labels = c("Male", "Female"))
+
+
+#2
+# Recode H3OD4A – Race: White
+# 0 = Not White, 1 = White, others = NA
+
+cleaned_data$H3OD4A_recode <- ifelse(cleaned_data$H3OD4A %in% c(0, 1),
+                                     cleaned_data$H3OD4A,
+                                     NA)
+
+# Convert to labeled factor
+cleaned_data$H3OD4A_recode <- factor(cleaned_data$H3OD4A_recode,
+                                     levels = c(0, 1),
+                                     labels = c("Not White", "White"))
+
+
+```
+
+
+#### Saving the Recoded Varibles as a separate dataset 
+```{r}
+# Create a new data frame with only recoded variables and AID for reference
+recoded_data <- cleaned_data[, c(
+  "AID",
+
+  # Target
+  "H3ID15_recode",
+
+  # Friends & Family
+  "H3DA15_recode", 
+  "H3FS12_recode",
+  "H3FS11_recode",
+  "H3SP6_recode",
+  "H3WP46_recode",
+  "H3WP53_recode",
+  "H3WP57_recode",
+
+  # SES
+  "H3DA28_recode",
+  "H3EC7_recode",
+  "H3EC3_recode",
+  "H3DA36_recode",
+  "H3EC26_recode",
+  "H3EC38_recode",
+
+  # Demographics
+  "BIO_SEX3_recode",
+  "H3OD4A_recode"
+)]
+
+# Create a complete-case dataset (drop rows with any NA)
+complete_data <- na.omit(recoded_data)
+
+# Save to CSV
+write.csv(complete_data, "complete_addhealth_data.csv", row.names = FALSE)
+```
+
+#### Finding NA in each Variable
+```{r}
+# Count NA values in each variable of your recoded dataset
+colSums(is.na(complete_data))
+```
+\
+\
+
+### Part 2 - Visualisation
+```{r}
+# Load libraries
+library(tidyverse)
+
+# Step 1: Read and clean the dataset
+data <- read.csv("complete_addhealth_data.csv", stringsAsFactors = TRUE)
+names(data) <- gsub("_recode$", "", names(data))
+
+# Step 2: Make sure key variables are treated as factors
+categorical_vars <- c("H3ID15", "BIO_SEX3", "H3FS11", "H3FS12", "H3SP6",
+                      "H3WP46", "H3WP53", "H3WP57", "H3DA28", "H3EC7", "H3EC3",
+                      "H3DA36", "H3EC26", "H3EC38", "H3OD4A")
+
+data[categorical_vars] <- lapply(data[categorical_vars], as.factor)
+
+# Step 3: Summary stats for numeric variable
+summary(data$H3DA15)
+
+# Step 4: Bar plots – Bivariate with Depression
+plot_vars <- categorical_vars[categorical_vars != "H3ID15"]  # exclude target
+
+for (var in plot_vars) {
+  print(
+    ggplot(data, aes_string(x = var, fill = "H3ID15")) +
+      geom_bar(position = "fill") +
+      labs(title = paste("Depression by", var),
+           x = var, y = "Proportion") +
+      scale_fill_manual(values = c("gray80", "tomato")) +
+      theme_minimal() +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  )
+}
+
+# Step 5: Boxplot – Numeric Predictor vs Target
+ggplot(data, aes(x = H3ID15, y = H3DA15, fill = H3ID15)) +
+  geom_boxplot() +
+  labs(title = "Frequency of Hanging Out with Friends by Depression Diagnosis",
+       x = "Depression Diagnosis", y = "Times Hung Out Last Week") +
+  theme_minimal()
+
+# Step 6: Cross-tabs
+
+# Peer support vs Depression
+print("Depression by Peer Interaction:")
+print(prop.table(table(data$H3DA15, data$H3ID15), margin = 1))
+
+# Income vs Depression
+print("Depression by Household Income:")
+print(prop.table(table(data$H3EC7, data$H3ID15), margin = 1))
+
+# Gender vs Depression
+print("Depression by Gender:")
+print(prop.table(table(data$BIO_SEX3, data$H3ID15), margin = 1))
+
+
+```
+```{r}
+library(dplyr)
+
+# Collapse to average depression rate
+interaction_summary <- data %>%
+  group_by(H3DA15, H3EC7) %>%
+  summarise(depression_rate = mean(H3ID15 == "Diagnosed Depression"))
+
+# Plot
+ggplot(interaction_summary, aes(x = H3DA15, y = depression_rate, color = H3EC7)) +
+  geom_line() +
+  geom_point() +
+  labs(title = "Interaction: Peer Support x Income on Depression",
+       x = "Friend Interactions (Past Week)",
+       y = "Rate of Diagnosed Depression",
+       color = "Household Income Bracket") +
+  theme_minimal()
+
+```
+
+
+```{r}
+library(ggmosaic)
+
+ggplot(data = data) +
+  geom_mosaic(aes(weight = 1, x = product(H3DA28, H3ID15), fill = H3ID15)) +
+  labs(title = "Depression by Employment Status",
+       x = "Employment", y = "Proportion") +
+  theme_minimal()
+
+```
+```{r}
+heat_data <- data %>%
+  group_by(BIO_SEX3, H3EC7) %>%
+  summarise(depression_rate = mean(H3ID15 == "Diagnosed Depression"))
+
+ggplot(heat_data, aes(x = BIO_SEX3, y = H3EC7, fill = depression_rate)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient(low = "lightblue", high = "red") +
+  labs(title = "Heatmap: Depression Rate by Gender and Income",
+       x = "Gender", y = "Household Income", fill = "Rate") +
+  theme_minimal()
+
+```
+
+```{r}
+# Filter out non-responses and prepare data
+plot_df <- data %>%
+  filter(H3WP53 != "Not Asked", H3EC38 != "Not Asked") %>%
+  group_by(H3WP53, H3EC38, BIO_SEX3) %>%
+  summarise(
+    DepressionRate = mean(H3ID15 == "Diagnosed Depression", na.rm = TRUE),
+    N = n(),
+    SE = sqrt((DepressionRate * (1 - DepressionRate))/N),
+    .groups = "drop"
+  )
+
+# Plot
+ggplot(plot_df, aes(x = H3WP53, y = DepressionRate, fill = BIO_SEX3)) +
+  geom_col(position = position_dodge(width = 0.8), width = 0.7) +
+  geom_errorbar(
+    aes(ymin = DepressionRate - 1.96 * SE, ymax = DepressionRate + 1.96 * SE),
+    width = 0.2, position = position_dodge(width = 0.8)
+  ) +
+  facet_wrap(~H3EC38) +
+  labs(
+    title = "Depression Diagnosis by Closeness to Friends, Income, and Gender ",
+    subtitle = "Higher closeness is associated with lower depression rates across genders and income groups \n\n
+                                                   Welfare Reciept Status (Yes/No)",
+    x = "Closeness to Friends",
+    y = "Proportion Diagnosed with Depression",
+    fill = "Gender"
+  ) +
+  theme_minimal(base_size = 10) +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1))
+
+```
+
+```{r}
+library(dplyr)
+
+plot_data <- data %>%
+  group_by(H3DA15, BIO_SEX3) %>%
+  summarise(DepressionRate = mean(H3ID15 == "Diagnosed Depression"),
+            N = n(),
+            SE = sqrt((DepressionRate * (1 - DepressionRate)) / N),
+            .groups = 'drop')
+
+# Add confidence intervals
+plot_data <- plot_data %>%
+  mutate(lower = DepressionRate - 1.96 * SE,
+         upper = DepressionRate + 1.96 * SE)
+
+library(ggplot2)
+
+ggplot(plot_data, aes(x = H3DA15, y = DepressionRate, color = BIO_SEX3, group = BIO_SEX3)) +
+  geom_line(size = 1.2) +
+  geom_point(size = 3) +
+  geom_ribbon(aes(ymin = lower, ymax = upper, fill = BIO_SEX3), alpha = 0.2, color = NA) +
+  scale_color_manual(values = c("steelblue", "coral")) +
+  scale_fill_manual(values = c("steelblue", "coral")) +
+  labs(
+    title = "Depression Rates by Peer Interaction and Gender",
+    subtitle = "Exploring how peer interactions relate to depression for males and females",
+    x = "Peer Interaction (Times Hung Out per Week)",
+    y = "Depression Rate",
+    color = "Gender",
+    fill = "Gender"
+  ) +
+  theme_minimal(base_size = 15)
+
+```
+
+```{r}
+library(dplyr)
+library(ggplot2)
+
+plot_data_welfare <- data %>%
+  group_by(H3DA15, H3EC38) %>%
+  summarise(DepressionRate = mean(H3ID15 == "Diagnosed Depression"),
+            N = n(),
+            SE = sqrt((DepressionRate * (1 - DepressionRate))/N),
+            .groups = 'drop')
+
+ggplot(plot_data_welfare, aes(x = H3DA15, y = DepressionRate, color = H3EC38, group = H3EC38)) +
+  geom_line(size = 1.2) +
+  geom_point(size = 3) +
+  geom_ribbon(aes(ymin = DepressionRate - 1.96*SE, ymax = DepressionRate + 1.96*SE, fill = H3EC38), alpha = 0.2, color = NA) +
+  labs(title = "Depression by Peer Interaction and Welfare Status",
+       subtitle = "Does welfare receipt influence peer support's impact?",
+       x = "Peer Interaction (Weekly)",
+       y = "Depression Rate",
+       color = "Welfare Receipt",
+       fill = "Welfare Receipt") +
+  theme_minimal()
+
+```
+
+```{r}
+plot_data_parents <- data %>%
+  group_by(H3WP46, BIO_SEX3) %>%  # Using mother's closeness here; you can replicate for father
+  summarise(DepressionRate = mean(H3ID15 == "Diagnosed Depression"),
+            N = n(),
+            SE = sqrt((DepressionRate * (1 - DepressionRate))/N),
+            .groups = 'drop')
+
+ggplot(plot_data_parents, aes(x = H3WP46, y = DepressionRate, group = BIO_SEX3, fill = BIO_SEX3)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.7), width=0.6) +
+  geom_errorbar(aes(ymin = DepressionRate - 1.96*SE, ymax = DepressionRate + 1.96*SE),
+                position = position_dodge(width = 0.7), width = 0.25) +
+  labs(title = "Depression by Mother's Closeness and Gender",
+       subtitle = "Does parental closeness affect depression differently by gender?",
+       x = "Closeness to Mother",
+       y = "Depression Rate",
+       fill = "Gender") +
+  theme_minimal()
+
+```
+```{r}
+library(ggplot2)
+library(dplyr)
+
+heatmap_data <- data %>%
+  group_by(H3DA15, H3SP6) %>%
+  summarise(DepressionRate = mean(H3ID15 == "Diagnosed Depression"), .groups = 'drop')
+
+ggplot(heatmap_data, aes(x = factor(H3DA15), y = H3SP6, fill = DepressionRate)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient(low = "lightyellow", high = "darkred") +
+  labs(title = "Depression Rate by Peer Interaction and Sadness",
+       subtitle = "Interaction between emotional state and social activity",
+       x = "Peer Interaction Frequency",
+       y = "Felt Sad (Frequency)",
+       fill = "Depression Rate") +
+  theme_minimal()
+
+```
+
+
+
+```{r}
+library(dplyr)
+library(ggplot2)
+
+# Exclude 'Not Asked'
+plot_main <- data %>%
+  filter(H3EC38 != "Not Asked") %>%
+  group_by(H3DA15, BIO_SEX3, H3EC38) %>%
+  summarise(DepressionRate = mean(H3ID15 == "Diagnosed Depression"),
+            N = n(),
+            SE = sqrt((DepressionRate * (1 - DepressionRate))/N),
+            .groups = 'drop')
+
+# Plot with smaller text sizes
+ggplot(plot_main, aes(x = H3DA15, y = DepressionRate, color = BIO_SEX3, group = BIO_SEX3)) +
+  geom_line(size = 1.1) +
+  geom_point(size = 2.5) +
+  geom_ribbon(aes(ymin = DepressionRate - 1.96*SE, ymax = DepressionRate + 1.96*SE, fill = BIO_SEX3), alpha = 0.2, color = NA) +
+  facet_wrap(~H3EC38) +
+  scale_color_manual(values = c("steelblue", "coral")) +
+  scale_fill_manual(values = c("steelblue", "coral")) +
+  labs(
+    title = "Peer Interaction and Depression: Gender and Welfare Status",
+    subtitle = "Examining friendship as a protective factor across socioeconomic situations",
+    x = "Peer Interaction Frequency (Weekly)",
+    y = "Depression Rate",
+    color = "Gender",
+    fill = "Gender"
+  ) +
+  theme_minimal(base_size = 10) +  # Reduce base text size
+  theme(
+    plot.title = element_text(size = 12, face = "bold"),
+    plot.subtitle = element_text(size = 10),
+    axis.title = element_text(size = 10),
+    axis.text = element_text(size = 9),
+    strip.text = element_text(size = 10),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 8)
+  )
+
+
+```
+
+
+
+\
+\
+
+###Part 3 - Regressions
+
+#### Correlation Matrix:
+```{r}
+# Load libraries
+library(tidyverse)
+library(corrplot)
+
+# Read and clean data
+data <- read.csv("complete_addhealth_data.csv", stringsAsFactors = TRUE)
+names(data) <- gsub("_recode$", "", names(data))
+
+# Encode factors as numeric for correlation
+data_corr <- data
+for (col in names(data_corr)) {
+  if (is.factor(data_corr[[col]]) || is.character(data_corr[[col]])) {
+    data_corr[[col]] <- as.numeric(as.factor(data_corr[[col]]))
+  }
+}
+
+# Plot correlation matrix
+cor_matrix <- cor(data_corr, use = "complete.obs")
+corrplot(cor_matrix, method = "color", type = "upper", tl.cex = 0.8)
+
+```
+
+#### Baseline Regression Model:
+```{r}
+# Make sure variables are factors where needed
+factor_vars <- c("H3ID15", "BIO_SEX3", "H3DA28", "H3DA36", "H3OD4A", "H3EC7", "H3EC3")
+data[factor_vars] <- lapply(data[factor_vars], as.factor)
+
+# Baseline model with only SES + demographic predictors
+baseline_model <- glm(H3ID15 ~ H3EC3 + H3EC7 + H3DA28 + H3DA36 + BIO_SEX3 + H3OD4A,
+                      data = data, family = binomial)
+
+summary(baseline_model)
+
+```
+#### Full Model
+```{r}
+# Ensure factor encoding for relevant variables
+factor_vars <- c("H3ID15", "BIO_SEX3", "H3DA28", "H3DA36", "H3OD4A", 
+                 "H3EC7", "H3EC3", "H3FS12", "H3FS11", "H3SP6", 
+                 "H3WP46", "H3WP53", "H3WP57", "H3EC26", "H3EC38")
+data[factor_vars] <- lapply(data[factor_vars], as.factor)
+
+# Fit the full model
+full_model <- glm(H3ID15 ~ H3FS12 + H3FS11 + H3SP6 + H3WP46 + H3WP53 + H3WP57 + 
+                    H3DA15 + H3DA28 + H3DA36 + H3EC7 + H3EC3 + H3EC26 + H3EC38 + 
+                    BIO_SEX3 + H3OD4A,
+                  data = data,
+                  family = binomial)
+
+# View summary
+summary(full_model)
+
+```
+
+#### Step-Wise Regression Model
+```{r}
+# Full model with all variables
+full_model <- glm(H3ID15 ~ ., data = data, family = binomial)
+
+# Stepwise model selection
+step_model <- step(full_model, direction = "both")
+
+# Summary of selected model
+summary(step_model)
+
+```
+#### Regression By Gender
+```{r}
+# Load necessary library
+library(dplyr)
+
+# Filter data into male and female subsets
+male_data <- filter(data, BIO_SEX3 == "Male")
+female_data <- filter(data, BIO_SEX3 == "Female")
+
+# Run logistic regression for males
+male_model <- glm(H3ID15 ~ H3FS12 + H3SP6 + H3WP53 + 
+                    H3DA28 + H3EC38 + H3OD4A,
+                  family = binomial, data = male_data)
+summary(male_model)
+
+# Run logistic regression for females
+female_model <- glm(H3ID15 ~ H3FS12 + H3SP6 + H3WP53 + 
+                      H3DA28 + H3EC38 + H3OD4A,
+                    family = binomial, data = female_data)
+summary(female_model)
+
+```
+
+
+#### Regression by Income
+
+```{r}
+# Create binary variable: 1 = Low income, 0 = Others
+data$LowIncome <- ifelse(data$H3EC3 %in% c("Less than $10,000", "$10,000–14,999", "$15,000–19,999"), 1, 0)
+
+interaction_model <- glm(H3ID15 ~ H3SP6 * LowIncome + H3FS12 + H3DA28 + 
+                         H3EC38 + BIO_SEX3 + H3OD4A,
+                         family = binomial, data = data)
+
+summary(interaction_model)
+
+```
+
