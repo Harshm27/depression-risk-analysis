@@ -6,7 +6,7 @@ A comprehensive statistical analysis examining the determinants of depression am
 [![R](https://img.shields.io/badge/R-276DC3?style=for-the-badge&logo=r&logoColor=white)](https://www.r-project.org/)
 [![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
 
-## 🎯 Project Overview
+## Project Overview
 
 This research investigates the multifaceted determinants of depression among young adults, examining how social relationships, family dynamics, socioeconomic factors, and demographic characteristics collectively influence depression diagnosis rates.
 
@@ -16,7 +16,7 @@ This research investigates the multifaceted determinants of depression among you
 - Are there significant gender-based variations in depression risk factors?
 - How do multiple factors interact to impact depression diagnosis rates?
 
-## 📊 Dataset
+## Dataset
 
 **Source:** Add Health (ICPSR Study #21600) - Wave III Data  
 **Population:** Young Adults (ages 18-26)  
@@ -24,11 +24,11 @@ This research investigates the multifaceted determinants of depression among you
 **Variables:** 15+ predictors across 3 categories
 
 ### Variable Categories
-- **👥 Social Support** (7 variables): Peer interactions, family relationships, parental closeness
-- **💰 Socioeconomic** (6 variables): Income, employment, education, welfare receipt
-- **👤 Demographics** (2 variables): Gender, race
+- **Social Support** (7 variables): Peer interactions, family relationships, parental closeness
+- **Socioeconomic** (6 variables): Income, employment, education, welfare receipt
+- **Demographics** (2 variables): Gender, race
 
-## 🔬 Methodology
+## Methodology
 
 ### Data Processing
 1. **Extraction**: Consolidated data from 42 .dta files from ICPSR_21600 dataset
@@ -46,7 +46,7 @@ This research investigates the multifaceted determinants of depression among you
   - Gender-stratified models
   - Interaction models (sadness × income)
 
-## 💡 Key Findings
+## Key Findings
 
 ### Primary Discoveries
 1. **Social Support as Protective Factor**: Frequent peer interactions and strong family relationships consistently predict lower depression rates
@@ -55,7 +55,7 @@ This research investigates the multifaceted determinants of depression among you
 4. **Parental Relationships**: Closeness to biological parents shows significant association with outcomes
 5. **Socioeconomic Interactions**: Peer support effects are moderated by income and welfare status
 
-## 📈 Visualizations
+## Visualizations
 
 The analysis includes comprehensive visualizations:
 - **Bivariate Analysis**: Depression rates across all categorical predictors
@@ -64,7 +64,7 @@ The analysis includes comprehensive visualizations:
 - **Heatmaps**: Depression rates by gender and income combinations
 - **Confidence Intervals**: Statistical uncertainty visualization
 
-## 🛠️ Technical Stack
+## Technical Stack
 
 ### R Packages
 - `haven` - Read Stata .dta files
@@ -81,7 +81,7 @@ The analysis includes comprehensive visualizations:
 - Interaction Modeling
 - Cross-tabulation
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 .
@@ -95,7 +95,7 @@ The analysis includes comprehensive visualizations:
 └── README.md                          # This file
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - R (version 4.0+)
@@ -125,14 +125,14 @@ rmarkdown::render("HCA_Individual_Assg1.Rmd")
 
 Simply open `index.html` in your web browser, or visit the [live demo](https://harshm27.github.io/depression-risk-analysis/).
 
-## 📊 Reproducing the Analysis
+## Reproducing the Analysis
 
 1. **Data Access**: Obtain Add Health data from [ICPSR](https://www.icpsr.umich.edu/web/ICPSR/studies/21600)
 2. **Data Extraction**: Run `Dataset_Extraction.R` to extract variables
 3. **Analysis**: Execute `HCA_Individual_Assg1.Rmd` to reproduce all analyses
 4. **Visualization**: All plots and tables will be regenerated
 
-## 📝 Citation
+## Citation
 
 If you use this analysis or methodology in your work, please cite:
 
@@ -142,7 +142,7 @@ Imperial College London, 2025
 https://github.com/harshm27/depression-risk-analysis
 ```
 
-## 🎓 Academic Context
+## Academic Context
 
 **Institution:** Imperial College London  
 **Program:** Healthcare Analytics  
@@ -150,22 +150,22 @@ https://github.com/harshm27/depression-risk-analysis
 **Year:** 2025  
 **Type:** Individual Assignment
 
-## 📄 License
+## License
 
 This project is for academic purposes. The Add Health dataset is subject to restricted use agreements. Please refer to [ICPSR usage terms](https://www.icpsr.umich.edu/web/ICPSR/studies/21600) for data access and usage restrictions.
 
-## 🤝 Contributing
+## Contributing
 
 This is an academic project, but feedback and suggestions are welcome! Feel free to:
 - Open an issue for questions or suggestions
 - Submit a pull request for improvements
 - Share your own analyses using similar methodologies
 
-## 📧 Contact
+## Contact
 
 For questions or collaboration opportunities, please reach out through GitHub issues.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - **Add Health Study**: University of North Carolina at Chapel Hill
 - **Data Source**: Inter-university Consortium for Political and Social Research (ICPSR)
@@ -175,10 +175,10 @@ For questions or collaboration opportunities, please reach out through GitHub is
 ---
 
 <p align="center">
-  <strong>🌟 Star this repository if you found it helpful! 🌟</strong>
+  <strong>Star this repository if you found it helpful!</strong>
 </p>
 
 <p align="center">
-  Made with ❤️ for Healthcare Analytics | Imperial College London
+  Made for Healthcare Analytics | Imperial College London
 </p>
 

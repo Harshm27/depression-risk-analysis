@@ -1,4 +1,4 @@
-# 🚀 Quick Deploy Commands for harshm27
+# Quick Deploy Commands for harshm27
 
 ## Step 1: Create GitHub Repository
 
@@ -38,11 +38,11 @@ You'll be prompted for your GitHub credentials:
 3. Click **Save**
 4. Wait 2-3 minutes
 
-## Step 4: View Your Live Site! 🎉
+## Step 4: View Your Live Site!
 
 Your site will be live at:
 
-**🌐 https://harshm27.github.io/depression-risk-analysis/**
+**https://harshm27.github.io/depression-risk-analysis/**
 
 ## Troubleshooting
 

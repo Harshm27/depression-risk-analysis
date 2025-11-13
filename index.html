@@ -97,16 +97,16 @@
         }
 
         .metadata-item::before {
-            content: '📊';
+            content: '';
             font-size: 1.2em;
         }
 
         .metadata-item:nth-child(2)::before {
-            content: '🏥';
+            content: '';
         }
 
         .metadata-item:nth-child(3)::before {
-            content: '👤';
+            content: '';
         }
 
         /* Navigation */
@@ -556,7 +556,7 @@
 
         <!-- Overview Section -->
         <section id="overview">
-            <h2><span class="section-icon">🎯</span> Project Overview</h2>
+            <h2>Project Overview</h2>
             
             <div class="highlight-box">
                 <h3>Research Objective</h3>
@@ -609,7 +609,7 @@
 
         <!-- Data Section -->
         <section id="data">
-            <h2><span class="section-icon">📊</span> Data Extraction & Variables</h2>
+            <h2>Data Extraction & Variables</h2>
 
             <h3>Dataset Information</h3>
             <p>The analysis utilizes the <strong>Add Health (ICPSR_21600)</strong> dataset, specifically focusing on Wave III data which captures information from young adults. The dataset was extracted from 42 different data files and consolidated into a comprehensive analytical dataset.</p>
@@ -624,7 +624,7 @@
 
             <div class="grid-3">
                 <div class="card">
-                    <h4>👥 Friends & Family (7 variables)</h4>
+                    <h4>Friends & Family (7 variables)</h4>
                     <div class="variable-list">
                         <ul>
                             <li><code>H3DA15</code> - Peer interaction frequency</li>
@@ -639,7 +639,7 @@
                 </div>
 
                 <div class="card">
-                    <h4>💰 Socioeconomic (6 variables)</h4>
+                    <h4>Socioeconomic (6 variables)</h4>
                     <div class="variable-list">
                         <ul>
                             <li><code>H3DA28</code> - Current employment status</li>
@@ -653,7 +653,7 @@
                 </div>
 
                 <div class="card">
-                    <h4>👤 Demographics (2 variables)</h4>
+                    <h4>Demographics (2 variables)</h4>
                     <div class="variable-list">
                         <ul>
                             <li><code>BIO_SEX3</code> - Biological gender</li>
@@ -686,7 +686,7 @@
 
         <!-- Data Preparation Section -->
         <section id="preparation">
-            <h2><span class="section-icon">🔧</span> Data Preparation & Recoding</h2>
+            <h2>Data Preparation & Recoding</h2>
 
             <p>All variables underwent systematic recoding to ensure analytical validity and interpretability. Invalid responses, refusals, and system-missing values were converted to NA, while valid responses were transformed into meaningful categorical or ordinal factors.</p>
 
@@ -728,18 +728,18 @@ cleaned_data$H3ID15_recode <- factor(cleaned_data$H3ID15_recode,<br>
             <h3>Final Dataset</h3>
             <div class="highlight-box">
                 <h3>Complete Dataset Characteristics</h3>
-                <ul style="list-style: none; padding: 0;">
-                    <li>✅ All variables recoded and labeled</li>
-                    <li>✅ Missing values handled appropriately</li>
-                    <li>✅ Complete-case analysis ready</li>
-                    <li>✅ Saved as <code>complete_addhealth_data.csv</code></li>
+                <ul style="list-style: disc; padding-left: 20px;">
+                    <li>All variables recoded and labeled</li>
+                    <li>Missing values handled appropriately</li>
+                    <li>Complete-case analysis ready</li>
+                    <li>Saved as <code>complete_addhealth_data.csv</code></li>
                 </ul>
             </div>
         </section>
 
         <!-- Visualization Section -->
         <section id="visualization">
-            <h2><span class="section-icon">📈</span> Data Visualization & Exploratory Analysis</h2>
+            <h2>Data Visualization & Exploratory Analysis</h2>
 
             <p>Comprehensive visualizations were created to explore relationships between depression and various predictors, examining both bivariate associations and complex interaction effects.</p>
 
@@ -747,27 +747,27 @@ cleaned_data$H3ID15_recode <- factor(cleaned_data$H3ID15_recode,<br>
 
             <div class="grid-3">
                 <div class="card">
-                    <h4>📊 Bar Plots</h4>
+                    <h4>Bar Plots</h4>
                     <p>Proportional stacked bar charts showing depression rates across categorical predictors for each variable.</p>
                 </div>
                 <div class="card">
-                    <h4>📦 Box Plots</h4>
+                    <h4>Box Plots</h4>
                     <p>Distribution analysis of peer interaction frequency stratified by depression diagnosis status.</p>
                 </div>
                 <div class="card">
-                    <h4>📉 Line Plots</h4>
+                    <h4>Line Plots</h4>
                     <p>Trend analysis with confidence intervals examining depression rates across peer interaction levels by gender.</p>
                 </div>
                 <div class="card">
-                    <h4>🔥 Heatmaps</h4>
+                    <h4>Heatmaps</h4>
                     <p>Two-dimensional visualization of depression rates across gender and income combinations.</p>
                 </div>
                 <div class="card">
-                    <h4>🎭 Mosaic Plots</h4>
+                    <h4>Mosaic Plots</h4>
                     <p>Proportional area representations showing relationships between employment and depression.</p>
                 </div>
                 <div class="card">
-                    <h4>📊 Faceted Plots</h4>
+                    <h4>Faceted Plots</h4>
                     <p>Multi-panel visualizations exploring three-way interactions between peer support, welfare receipt, and gender.</p>
                 </div>
             </div>
@@ -825,7 +825,7 @@ cleaned_data$H3ID15_recode <- factor(cleaned_data$H3ID15_recode,<br>
 
         <!-- Regression Analysis Section -->
         <section id="regression">
-            <h2><span class="section-icon">🔬</span> Regression Analysis</h2>
+            <h2>Regression Analysis</h2>
 
             <p>Multiple logistic regression models were constructed to quantify the relationship between depression diagnosis and various predictors, accounting for confounding variables and exploring interaction effects.</p>
 
@@ -930,7 +930,7 @@ cleaned_data$H3ID15_recode <- factor(cleaned_data$H3ID15_recode,<br>
 
         <!-- Findings Section -->
         <section id="findings">
-            <h2><span class="section-icon">💡</span> Key Findings & Implications</h2>
+            <h2>Key Findings & Implications</h2>
 
             <div class="highlight-box">
                 <h3>Major Discoveries</h3>
@@ -968,7 +968,7 @@ cleaned_data$H3ID15_recode <- factor(cleaned_data$H3ID15_recode,<br>
 
             <div class="grid-2">
                 <div class="card">
-                    <h4>🏥 Clinical Practice</h4>
+                    <h4>Clinical Practice</h4>
                     <ul style="margin-top: 15px;">
                         <li>Screen for social isolation in depression assessments</li>
                         <li>Consider gender-specific intervention approaches</li>
@@ -977,7 +977,7 @@ cleaned_data$H3ID15_recode <- factor(cleaned_data$H3ID15_recode,<br>
                     </ul>
                 </div>
                 <div class="card">
-                    <h4>📋 Public Health Policy</h4>
+                    <h4>Public Health Policy</h4>
                     <ul style="margin-top: 15px;">
                         <li>Develop social connection programs for at-risk youth</li>
                         <li>Target interventions to low-income communities</li>
@@ -989,7 +989,7 @@ cleaned_data$H3ID15_recode <- factor(cleaned_data$H3ID15_recode,<br>
 
             <h3>Study Limitations</h3>
             <div class="card">
-                <h4>⚠️ Methodological Considerations</h4>
+                <h4>Methodological Considerations</h4>
                 <ul style="margin-top: 15px;">
                     <li><strong>Cross-sectional design:</strong> Cannot establish causality or temporal relationships</li>
                     <li><strong>Self-reported data:</strong> Potential for recall bias and social desirability effects</li>
@@ -1018,38 +1018,38 @@ cleaned_data$H3ID15_recode <- factor(cleaned_data$H3ID15_recode,<br>
 
         <!-- Resources Section -->
         <section id="resources">
-            <h2><span class="section-icon">📚</span> Project Resources</h2>
+            <h2>Project Resources</h2>
 
             <h3>Available Downloads</h3>
             <div class="download-buttons">
                 <a href="HCA_Individual_Assg1.Rmd" class="btn btn-primary" download>
-                    📄 R Markdown Code
+                    R Markdown Code
                 </a>
                 <a href="HCA_Individual_Assg1.html" class="btn btn-secondary" download>
-                    📊 Analysis Report (HTML)
+                    Analysis Report (HTML)
                 </a>
                 <a href="HCA_Individual_Assg1_Code.pdf" class="btn btn-success" download>
-                    📑 Code PDF
+                    Code PDF
                 </a>
                 <a href="HCA_Individual_Assignment.pdf" class="btn btn-primary" download>
-                    📋 Assignment Document
+                    Assignment Document
                 </a>
             </div>
 
             <h3>Datasets</h3>
             <div class="grid-3">
                 <div class="card">
-                    <h4>📊 Cleaned Dataset</h4>
+                    <h4>Cleaned Dataset</h4>
                     <p><code>cleaned_addhealth_data.csv</code></p>
                     <p>Initial cleaned data with NA removal</p>
                 </div>
                 <div class="card">
-                    <h4>🔄 Recoded Dataset</h4>
+                    <h4>Recoded Dataset</h4>
                     <p><code>recoded_addhealth_data.csv</code></p>
                     <p>All variables recoded and labeled</p>
                 </div>
                 <div class="card">
-                    <h4>✅ Complete Dataset</h4>
+                    <h4>Complete Dataset</h4>
                     <p><code>complete_addhealth_data.csv</code></p>
                     <p>Final analysis-ready dataset</p>
                 </div>
@@ -1058,7 +1058,7 @@ cleaned_data$H3ID15_recode <- factor(cleaned_data$H3ID15_recode,<br>
             <h3>Technical Stack</h3>
             <div class="grid-2">
                 <div class="card">
-                    <h4>📦 R Packages Used</h4>
+                    <h4>R Packages Used</h4>
                     <ul style="margin-top: 15px;">
                         <li><code>haven</code> - Read .dta Stata files</li>
                         <li><code>tidyverse</code> - Data manipulation and visualization</li>
@@ -1069,7 +1069,7 @@ cleaned_data$H3ID15_recode <- factor(cleaned_data$H3ID15_recode,<br>
                     </ul>
                 </div>
                 <div class="card">
-                    <h4>📈 Analysis Methods</h4>
+                    <h4>Analysis Methods</h4>
                     <ul style="margin-top: 15px;">
                         <li>Logistic Regression (GLM)</li>
                         <li>Stepwise Model Selection</li>

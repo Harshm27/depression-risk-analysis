@@ -1,22 +1,22 @@
-# 🚀 GitHub Deployment Guide
+# GitHub Deployment Guide
 
 This guide will walk you through deploying your Depression Risk Factors Analysis project to GitHub and GitHub Pages.
 
-## 📋 Prerequisites
+## Prerequisites
 
 - [x] Git repository initialized ✅
 - [x] Files committed ✅
 - [ ] GitHub account (create one at [github.com](https://github.com))
 - [ ] Git configured with your credentials
 
-## 🔧 Step 1: Configure Git (If Not Already Done)
+## Step 1: Configure Git (If Not Already Done)
 
 ```bash
 git config --global user.name "Your Name"
 git config --global user.email "your.email@example.com"
 ```
 
-## 📦 Step 2: Create GitHub Repository
+## Step 2: Create GitHub Repository
 
 ### Option A: Via GitHub Website (Recommended)
 
@@ -37,7 +37,7 @@ git config --global user.email "your.email@example.com"
 gh repo create depression-risk-analysis --public --source=. --remote=origin --push
 ```
 
-## 🔗 Step 3: Connect Local Repository to GitHub
+## Step 3: Connect Local Repository to GitHub
 
 After creating the repository on GitHub, you'll see a page with commands. Use these:
 
@@ -56,7 +56,7 @@ git push -u origin main
 
 Replace `YOUR_USERNAME` with your actual GitHub username.
 
-## 🌐 Step 4: Enable GitHub Pages
+## Step 4: Enable GitHub Pages
 
 ### Via GitHub Website:
 
@@ -74,10 +74,10 @@ Replace `YOUR_USERNAME` with your actual GitHub username.
 
 After a few minutes, refresh the Settings → Pages section. You should see:
 ```
-✅ Your site is live at https://YOUR_USERNAME.github.io/depression-risk-analysis/
+Your site is live at https://YOUR_USERNAME.github.io/depression-risk-analysis/
 ```
 
-## 🎨 Step 5: Update README with Your Live URL
+## Step 5: Update README with Your Live URL
 
 After deployment, update the README badge:
 
@@ -93,7 +93,7 @@ After deployment, update the README badge:
    git push
    ```
 
-## 🔄 Step 6: Making Updates
+## Step 6: Making Updates
 
 Whenever you make changes to your project:
 
@@ -110,7 +110,7 @@ git push
 # Your GitHub Pages site will automatically update in 1-2 minutes!
 ```
 
-## 📱 Step 7: Share Your Project
+## Step 7: Share Your Project
 
 Your project is now live! Share it using:
 
@@ -119,7 +119,7 @@ Your project is now live! Share it using:
 - **LinkedIn**: Add to your projects section
 - **Resume/CV**: Include the live demo link
 
-## 🎯 Optional Enhancements
+## Optional Enhancements
 
 ### Add a Custom Domain (Optional)
 
@@ -142,7 +142,7 @@ Your project is now live! Share it using:
 3. Add website: Your GitHub Pages URL
 4. Save
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Issue: Push Rejected (Authentication)
 
@@ -171,7 +171,7 @@ ssh-keygen -t ed25519 -C "your.email@example.com"
 - All links in `index.html` are relative (not absolute paths) ✅
 - Files are committed and pushed to GitHub
 
-## 📊 Monitoring Your Site
+## Monitoring Your Site
 
 ### GitHub Actions (Automatic)
 
@@ -187,7 +187,7 @@ Add Google Analytics to track visitors:
 2. Add to `index.html` before `</head>`
 3. Commit and push
 
-## ✅ Deployment Checklist
+## Deployment Checklist
 
 - [ ] Git repository initialized
 - [ ] GitHub account created
@@ -201,9 +201,9 @@ Add Google Analytics to track visitors:
 - [ ] Repository description added
 - [ ] Shared on LinkedIn/portfolio
 
-## 🎉 Success!
+## Success!
 
-Your Depression Risk Factors Analysis is now live on the web! 🌐
+Your Depression Risk Factors Analysis is now live on the web!
 
 **Next Steps:**
 1. Share your project with classmates and professors
@@ -215,5 +215,5 @@ Your Depression Risk Factors Analysis is now live on the web! 🌐
 
 Need help? Open an issue in the repository or refer to [GitHub Pages documentation](https://docs.github.com/en/pages).
 
-**Happy Deploying! 🚀**
+**Happy Deploying!**
 
