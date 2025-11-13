@@ -2,7 +2,7 @@
 
 A comprehensive statistical analysis examining the determinants of depression among young adults using the National Longitudinal Study of Adolescent to Adult Health (Add Health) dataset.
 
-[![View Project](https://img.shields.io/badge/View-Live%20Demo-blue?style=for-the-badge)](https://yourusername.github.io/depression-risk-analysis/)
+[![View Project](https://img.shields.io/badge/View-Live%20Demo-blue?style=for-the-badge)](https://harshm27.github.io/depression-risk-analysis/)
 [![R](https://img.shields.io/badge/R-276DC3?style=for-the-badge&logo=r&logoColor=white)](https://www.r-project.org/)
 [![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
 
@@ -106,7 +106,7 @@ The analysis includes comprehensive visualizations:
 
 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/depression-risk-analysis.git
+git clone https://github.com/harshm27/depression-risk-analysis.git
 cd depression-risk-analysis
 ```
 
@@ -123,7 +123,7 @@ rmarkdown::render("HCA_Individual_Assg1.Rmd")
 
 ### View the Interactive Website
 
-Simply open `index.html` in your web browser, or visit the [live demo](https://yourusername.github.io/depression-risk-analysis/).
+Simply open `index.html` in your web browser, or visit the [live demo](https://harshm27.github.io/depression-risk-analysis/).
 
 ## 📊 Reproducing the Analysis
 
@@ -139,7 +139,7 @@ If you use this analysis or methodology in your work, please cite:
 ```
 Depression Risk Factors Analysis using Add Health Dataset
 Imperial College London, 2025
-https://github.com/yourusername/depression-risk-analysis
+https://github.com/harshm27/depression-risk-analysis
 ```
 
 ## 🎓 Academic Context
